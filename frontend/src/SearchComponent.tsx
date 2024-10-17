@@ -48,7 +48,7 @@ const SearchComponent: React.FC = () => {
                 <div className="mt-4">
                     {searched && results.length > 0 ? (
                     <ul>
-                        <SearchResults results={[]}></SearchResults>
+                        <SearchResults results={results}></SearchResults>
                     </ul>
                     ) : (
                         searched && <p>No results found</p> // Only show if searched
