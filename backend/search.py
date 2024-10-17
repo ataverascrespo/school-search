@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 import os
+import time
 import requests
 import re
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -47,24 +49,32 @@ def calculate_travel_times(start_address, destination_address):
     # Get the API key from environment variables
     api_key = os.getenv('API_KEY')
     
-    travel_modes = ['driving', 'walking', 'transit']
+    travel_modes = ['walking', 'transit', 'driving']
     travel_times = {}
-    
+
+    print("hello")
+    tomorrow = datetime.now() + timedelta(days=1)
+    desired_time = tomorrow.replace(hour=9, minute=0, second=0, microsecond=0)
+    print(desired_time)
+    # Convert the desired time to a Unix timestamp (seconds since epoch)
+    departure_time = int(time.mktime(desired_time.timetuple()))
+    print(departure_time)
+
     for mode in travel_modes:
         # URL for Directions API with the specified travel mode
-        directions_url = f'https://maps.googleapis.com/maps/api/directions/json?origin={start_address}&destination={destination_address}&mode={mode}&key={api_key}'
+        directions_url = f'https://maps.googleapis.com/maps/api/directions/json?origin={start_address}&destination={destination_address}&mode={mode}&departure_time={departure_time}&key={api_key}'
         
         response = requests.get(directions_url)
         results = response.json()
         
-        if results['status'] == 'OK':
-            # Get the duration text (e.g., '15 mins', '1 hour 20 mins')
-            duration = results['routes'][0]['legs'][0]['duration']['text']
-            travel_times[mode] = duration
-        else:
-            # If there's an error (e.g., no transit routes available), set the time to None
-            travel_times[mode] = None
-            print(f"Error calculating {mode} time:", results['status'], results.get('error_message', ''))
+        if results['status'] == 'OK':            
+            if mode == 'driving':
+                # Retrieve duration in traffic for driving mode
+                duration_in_traffic = results['routes'][0]['legs'][0]['duration_in_traffic']['text']
+                travel_times[mode] = duration_in_traffic
+            else:
+                duration = results['routes'][0]['legs'][0]['duration']['text']
+                travel_times[mode] = duration
 
     # Return a tuple of the times (driving, walking, transit)
     return (travel_times.get('driving'), travel_times.get('walking'), travel_times.get('transit'))
@@ -90,7 +100,7 @@ def search_data():
     df_school_name_column = 'School Name'
     df_rank_column = 'LOI 2023\nRank' 
 
-    search_term = "Shaw"
+    search_term = request.args.get('query', type=str)  
     school_matches = search_school_rank(df_file_path, search_term)
     
     # Check if any matches were found
@@ -106,17 +116,14 @@ def search_data():
             if school_address:
                 print(f"School Address: {school_address}")
 
-                # Get driving, walking, and transit times from start address to school name
                 driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name)
                 print(f"Distance: {driving_time} drive, {transit_time} via TTC, or {walking_time} walk")
                 
-                # Calculate driving time from start address to school name
-                maps_url = generate_maps_url(start_address, school_name)
+                google_maps_url = generate_maps_url(start_address, school_name)
                 
-                if maps_url:
-                    print(f"Directions: {maps_url}")
+                if google_maps_url:
+                    print(f"Directions: {google_maps_url}")
 
-                # Add each result as a dictionary to the results list
                 results.append({
                     "school_name": school_name,
                     "school_rank": school_rank,
@@ -124,10 +131,9 @@ def search_data():
                     "driving_time": driving_time,
                     "walking_time": walking_time,
                     "transit_time": transit_time,
-                    "maps_url": maps_url if maps_url else "URL not found"
+                    "google_maps_url": google_maps_url if google_maps_url else "URL not found"
                 })
 
-         # Return the list of results as JSON
         return jsonify(results)
                         
     else:
