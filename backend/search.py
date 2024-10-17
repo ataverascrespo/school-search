@@ -85,6 +85,7 @@ def generate_maps_url(start_address, school_name):
 @cross_origin()
 def search_data():
     df_file_path = 'TDSB_lio.xlsx' 
+    df_school_id_column = 'School ID'
     df_school_name_column = 'School Name'
     df_rank_column = 'LOI 2023\nRank' 
 
@@ -97,6 +98,7 @@ def search_data():
         for index, row in school_matches.iterrows():
 
             school_name = row[df_school_name_column]
+            school_id = row[df_school_id_column]
             school_rank = row[df_rank_column]
 
             start_address = os.getenv('HOME_ADDRESS')
@@ -104,6 +106,7 @@ def search_data():
             google_maps_url, apple_maps_url = generate_maps_url(start_address, school_name)
 
             results.append({
+                "school_id": school_id,
                 "school_name": school_name,
                 "school_rank": school_rank,
                 "driving_time": driving_time,
