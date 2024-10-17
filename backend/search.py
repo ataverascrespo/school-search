@@ -80,19 +80,21 @@ def calculate_travel_times(start_address, destination_address):
     return (travel_times.get('driving'), travel_times.get('walking'), travel_times.get('transit'))
 
 
-def generate_maps_url(start_address, school_name):
+def generate_maps_url(start_address, school_name, school_address):
     postal_code_pattern = r'[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d'
     # Replace postal codes with an empty string
     start_address = re.sub(postal_code_pattern, '', start_address)
+    school_address = re.sub(postal_code_pattern, '', school_address)
 
     # Trim all whitespace from address strings
     start_address = "".join(start_address.split())
+    school_address = "".join(school_address.split())
     school_name = "".join(school_name.split())
 
-    # Generate the URL
-    directions_url = f'https://www.google.com/maps/dir/?api=1&origin={start_address}&destination={school_name}&travelmode=best'
-    
-    return directions_url
+    # Generate the URLs
+    google_url = f'https://www.google.com/maps/dir/?api=1&origin={start_address}&destination={school_name}&travelmode=best'
+    apple_url = f'http://maps.apple.com/?saddr={start_address}&daddr=S{school_address}'
+    return (google_url, apple_url)
 
 @app.route('/search', methods=['GET'])
 def search_data():
@@ -113,26 +115,25 @@ def search_data():
 
             start_address = os.getenv('HOME_ADDRESS')
             school_address = find_school_address(school_name)
-            if school_address:
-                print(f"School Address: {school_address}")
+            print(f"School Address: {school_address}")
 
-                driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name)
-                print(f"Distance: {driving_time} drive, {transit_time} via TTC, or {walking_time} walk")
-                
-                google_maps_url = generate_maps_url(start_address, school_name)
-                
-                if google_maps_url:
-                    print(f"Directions: {google_maps_url}")
+            driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name)
+            print(f"Distance: {driving_time} drive, {transit_time} via TTC, or {walking_time} walk")
+            
+            google_maps_url, apple_maps_url = generate_maps_url(start_address, school_name, school_address)
+            print(f"Google directions: {google_maps_url}")
+            print(f"Apple directions: {apple_maps_url}")
 
-                results.append({
-                    "school_name": school_name,
-                    "school_rank": school_rank,
-                    "school_address": school_address if school_address else "Address not found",
-                    "driving_time": driving_time,
-                    "walking_time": walking_time,
-                    "transit_time": transit_time,
-                    "google_maps_url": google_maps_url if google_maps_url else "URL not found"
-                })
+            results.append({
+                "school_name": school_name,
+                "school_rank": school_rank,
+                "school_address": school_address if school_address else "Address not found",
+                "driving_time": driving_time,
+                "walking_time": walking_time,
+                "transit_time": transit_time,
+                "google_maps_url": google_maps_url if google_maps_url else "URL not found",
+                "apple_maps_url": apple_maps_url if apple_maps_url else "URL not found"
+            })
 
         return jsonify(results)
                         
