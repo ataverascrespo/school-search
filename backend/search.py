@@ -6,8 +6,11 @@ import requests
 import re
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app) 
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Load environment variables from .env file
 load_dotenv()
@@ -34,13 +37,11 @@ def calculate_travel_times(start_address, destination_address):
     travel_modes = ['walking', 'transit', 'driving']
     travel_times = {}
 
-    print("hello")
     tomorrow = datetime.now() + timedelta(days=1)
     desired_time = tomorrow.replace(hour=9, minute=0, second=0, microsecond=0)
-    print(desired_time)
     # Convert the desired time to a Unix timestamp (seconds since epoch)
     departure_time = int(time.mktime(desired_time.timetuple()))
-    print(departure_time)
+
 
     for mode in travel_modes:
         if mode == 'driving':
@@ -75,16 +76,13 @@ def generate_maps_url(start_address, school_name):
     start_address = "".join(start_address.split())
     school_name = "".join(school_name.split())
 
-    # specify arrival time (always next day)
-    arrive_time = (datetime.now() + timedelta(days=1)).replace(hour=9, minute=0, second=0, microsecond=0)
-    arrive_time_str = arrive_time.strftime("%Y-%m-%dT%H:%M:%S")
-
     # Generate the URLs
     google_url = f'https://www.google.com/maps/dir/?api=1&origin={start_address}&destination={school_name}&travelmode=best'
     apple_url = f'http://maps.apple.com/?saddr={start_address}&daddr={school_name}'
     return (google_url, apple_url)
 
 @app.route('/search', methods=['GET'])
+@cross_origin()
 def search_data():
     df_file_path = 'TDSB_lio.xlsx' 
     df_school_name_column = 'School Name'
@@ -102,13 +100,8 @@ def search_data():
             school_rank = row[df_rank_column]
 
             start_address = os.getenv('HOME_ADDRESS')
-
             driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name)
-            print(f"Distance: {driving_time} drive, {transit_time} via TTC, or {walking_time} walk")
-            
             google_maps_url, apple_maps_url = generate_maps_url(start_address, school_name)
-            print(f"Google directions: {google_maps_url}")
-            print(f"Apple directions: {apple_maps_url}")
 
             results.append({
                 "school_name": school_name,
