@@ -27,24 +27,6 @@ def search_school_rank(file_path, search_term):
     
     return matches
 
-
-def find_school_address(school_name):
-    api_key = os.getenv('API_KEY')
-    
-    # URL for Places API search
-    search_url = f'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={school_name}&inputtype=textquery&fields=formatted_address&key={api_key}'
-    
-    response = requests.get(search_url)
-    results = response.json()
-
-    if results['status'] == 'OK':
-        school_address = results['candidates'][0]['formatted_address']
-        return school_address
-    else:
-        print("Error finding school address:", results['status'])
-        return None
-
-
 def calculate_travel_times(start_address, destination_address):
     # Get the API key from environment variables
     api_key = os.getenv('API_KEY')
@@ -61,9 +43,13 @@ def calculate_travel_times(start_address, destination_address):
     print(departure_time)
 
     for mode in travel_modes:
-        # URL for Directions API with the specified travel mode
-        directions_url = f'https://maps.googleapis.com/maps/api/directions/json?origin={start_address}&destination={destination_address}&mode={mode}&departure_time={departure_time}&key={api_key}'
-        
+        if mode == 'driving':
+            # URL for Directions API with the specified travel mode
+            directions_url = f'https://maps.googleapis.com/maps/api/directions/json?origin={start_address}&destination={destination_address}&mode={mode}&departure_time={departure_time}&key={api_key}'
+        else:
+             # URL for Directions API with the specified travel mode
+            directions_url = f'https://maps.googleapis.com/maps/api/directions/json?origin={start_address}&destination={destination_address}&mode={mode}&key={api_key}'
+
         response = requests.get(directions_url)
         results = response.json()
         
@@ -80,20 +66,22 @@ def calculate_travel_times(start_address, destination_address):
     return (travel_times.get('driving'), travel_times.get('walking'), travel_times.get('transit'))
 
 
-def generate_maps_url(start_address, school_name, school_address):
+def generate_maps_url(start_address, school_name):
     postal_code_pattern = r'[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d'
     # Replace postal codes with an empty string
     start_address = re.sub(postal_code_pattern, '', start_address)
-    school_address = re.sub(postal_code_pattern, '', school_address)
 
     # Trim all whitespace from address strings
     start_address = "".join(start_address.split())
-    school_address = "".join(school_address.split())
     school_name = "".join(school_name.split())
+
+    # specify arrival time (always next day)
+    arrive_time = (datetime.now() + timedelta(days=1)).replace(hour=9, minute=0, second=0, microsecond=0)
+    arrive_time_str = arrive_time.strftime("%Y-%m-%dT%H:%M:%S")
 
     # Generate the URLs
     google_url = f'https://www.google.com/maps/dir/?api=1&origin={start_address}&destination={school_name}&travelmode=best'
-    apple_url = f'http://maps.apple.com/?saddr={start_address}&daddr=S{school_address}'
+    apple_url = f'http://maps.apple.com/?saddr={start_address}&daddr={school_name}'
     return (google_url, apple_url)
 
 @app.route('/search', methods=['GET'])
@@ -114,20 +102,17 @@ def search_data():
             school_rank = row[df_rank_column]
 
             start_address = os.getenv('HOME_ADDRESS')
-            school_address = find_school_address(school_name)
-            print(f"School Address: {school_address}")
 
             driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name)
             print(f"Distance: {driving_time} drive, {transit_time} via TTC, or {walking_time} walk")
             
-            google_maps_url, apple_maps_url = generate_maps_url(start_address, school_name, school_address)
+            google_maps_url, apple_maps_url = generate_maps_url(start_address, school_name)
             print(f"Google directions: {google_maps_url}")
             print(f"Apple directions: {apple_maps_url}")
 
             results.append({
                 "school_name": school_name,
                 "school_rank": school_rank,
-                "school_address": school_address if school_address else "Address not found",
                 "driving_time": driving_time,
                 "walking_time": walking_time,
                 "transit_time": transit_time,
