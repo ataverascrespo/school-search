@@ -19,7 +19,7 @@ const SearchComponent: React.FC = () => {
     try {
       const response = await fetch(`http://127.0.0.1:5000/search?query=${query}`);
       const data: SchoolResult[] = await response.json();
-      setResults(data);
+      setResults(data.reverse());
       setSearchLoading(false)
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -36,7 +36,7 @@ const SearchComponent: React.FC = () => {
           placeholder="Search for a school..."
           className="border border-gray-300 p-2 rounded-md w-full"
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded-md">
+        <button type="submit" className="bg-blue-500 text-white p-2 w-1/3 md:w-1/6 rounded-md">
           Search
         </button>
       </form>
