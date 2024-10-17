@@ -8,6 +8,8 @@ const SearchComponent: React.FC = () => {
   const [results, setResults] = useState<SchoolResult[]>([]);
   const [searched, setSearched] = useState<boolean>(false);
   const [isSearchLoading, setSearchLoading] = useState<boolean>(false);
+
+  var apiURL = import.meta.env.VITE_API_URL;
   
   const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,9 +17,9 @@ const SearchComponent: React.FC = () => {
 
     setSearchLoading(true);
     setSearched(true);
-    
+        
     try {
-      const response = await fetch(`http://127.0.0.1:5000/search?query=${query}`);
+      const response = await fetch(`${apiURL}/search?query=${query}`);
       const data: SchoolResult[] = await response.json();
       setResults(data.reverse());
       setSearchLoading(false)

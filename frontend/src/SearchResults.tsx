@@ -10,7 +10,7 @@ export default function SearchResults({ results }: Props) {
     return (
     <div className="h-full w-full mt-12">
         {results.map(item => (
-            <div className="mb-10 flex flex-col bg-[#fdfdfd] rounded-lg py-8 px-6 lg:px-12 gap-6 border-2 border-neutral-200">
+            <div key={item.school_id} className="mb-10 flex flex-col bg-[#fdfdfd] rounded-lg py-8 px-6 lg:px-12 gap-6 border-2 border-neutral-200">
                 <div className="flex flex-col">
                     <h1 className="text-xl lg:text-2xl font-bold">{item.school_name}</h1>
                     <h2 className="text-base lg:text-lg font-light">LIO ranking of
