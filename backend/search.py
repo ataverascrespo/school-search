@@ -30,7 +30,7 @@ def search_school_rank(file_path, search_term):
     
     return matches
 
-def calculate_travel_times(start_address, destination_address):
+def calculate_travel_times(start_address, destination_address, start_time):
     # Get the API key from environment variables
     api_key = os.getenv('API_KEY')
     
@@ -38,10 +38,13 @@ def calculate_travel_times(start_address, destination_address):
     travel_times = {}
 
     tomorrow = datetime.now() + timedelta(days=1)
-    desired_time = tomorrow.replace(hour=9, minute=0, second=0, microsecond=0)
+    # Parse the passed date from front-end to be passed
+    parsed_time = datetime.strptime(start_time, "%H:%M")
+    hour = parsed_time.hour
+    minute = parsed_time.minute
+    desired_time = tomorrow.replace(hour=hour, minute=minute, second=0, microsecond=0)
     # Convert the desired time to a Unix timestamp (seconds since epoch)
     departure_time = int(time.mktime(desired_time.timetuple()))
-
 
     for mode in travel_modes:
         if mode == 'driving':
@@ -90,6 +93,7 @@ def search_data():
     df_rank_column = 'LOI 2023\nRank' 
 
     search_term = request.args.get('query', type=str)  
+    search_time = request.args.get('time', type=str)
     school_matches = search_school_rank(df_file_path, search_term)
     
     # Check if any matches were found
@@ -102,13 +106,14 @@ def search_data():
             school_rank = row[df_rank_column]
 
             start_address = os.getenv('HOME_ADDRESS')
-            driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name)
+            driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name, search_time)
             google_maps_url, apple_maps_url = generate_maps_url(start_address, school_name)
 
             results.append({
                 "school_id": school_id,
                 "school_name": school_name,
                 "school_rank": school_rank,
+                "school_time": search_time,
                 "driving_time": driving_time,
                 "walking_time": walking_time,
                 "transit_time": transit_time,

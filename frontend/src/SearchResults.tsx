@@ -19,21 +19,27 @@ export default function SearchResults({ results }: Props) {
                     </h2>
                 </div>
 
-                <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
-                   <div className="flex flex-row gap-2">
-                        <CarFront />
-                        <p><span className="font-bold">{item.driving_time}</span> drive (approximately)</p>
-                   </div>
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col">
+                        <p>Estimated travel times for <span className="font-bold">{item.school_time}</span> start:</p>
+                        <p className="text-xs italic">Always verify travel times on your own!</p>
+                    </div>
+                    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+                        <div className="flex flex-row gap-2">
+                                <CarFront />
+                                <p><span className="font-bold">{item.driving_time}</span> drive (approximately)</p>
+                        </div>
 
-                   <div className="flex flex-row gap-2">
-                        <TramFront />
-                        <p><span className="font-bold">{item.transit_time}</span> via TTC</p>
-                   </div>
+                        <div className="flex flex-row gap-2">
+                                <TramFront />
+                                <p><span className="font-bold">{item.transit_time}</span> via TTC</p>
+                        </div>
 
-                   <div className="flex flex-row gap-2">
-                        <Footprints />
-                        <p><span className="font-bold">{item.walking_time}</span> walk</p>
-                   </div>
+                        <div className="flex flex-row gap-2">
+                                <Footprints />
+                                <p><span className="font-bold">{item.walking_time}</span> walk</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">

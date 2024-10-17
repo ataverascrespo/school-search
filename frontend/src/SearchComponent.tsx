@@ -5,6 +5,7 @@ import SearchResults from './SearchResults';
 
 const SearchComponent: React.FC = () => {
   const [query, setQuery] = useState<string>('');
+  const [time, setTime] = useState('');
   const [results, setResults] = useState<SchoolResult[]>([]);
   const [searched, setSearched] = useState<boolean>(false);
   const [isSearchLoading, setSearchLoading] = useState<boolean>(false);
@@ -19,26 +20,39 @@ const SearchComponent: React.FC = () => {
     setSearched(true);
         
     try {
-      const response = await fetch(`${apiURL}/search?query=${query}`);
+      const response = await fetch(`${apiURL}/search?query=${query}&time=${time}`);
       const data: SchoolResult[] = await response.json();
-      setResults(data.reverse());
+      setResults(data);
       setSearchLoading(false)
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
+  const isFormValid = () => {
+      return query.trim() !== '' && time.trim() !== '';
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <form onSubmit={handleSearch} className="flex gap-4">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for a school..."
-          className="border border-gray-300 p-2 rounded-md w-full"
-        />
-        <button type="submit" className="bg-blue-500 text-white p-2 w-1/3 md:w-1/6 rounded-md">
+      <form onSubmit={handleSearch} className="flex gap-4 items-baseline">
+        <div className="flex flex-col w-full">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search for a school..."
+            className="border  border-gray-300 p-2 rounded-md w-full text-sm"
+          />
+          <label className='text-xs lg:text-sm px-2 mt-1' htmlFor="text">School Name</label>
+        </div>
+
+        <div className="flex flex-col w-1/3 lg:w-1/6">
+          <input type="time" min="6:00" max="16:00" value={time} onChange={(e) => setTime(e.target.value)} className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></input>
+          <label className='text-xs lg:text-sm px-2 mt-1' htmlFor="time">Start Time</label>
+        </div>
+
+        <button type="submit" className={` text-white p-2 w-1/3 md:w-1/6 rounded-md ${isFormValid() ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'}`}>
           Search
         </button>
       </form>
