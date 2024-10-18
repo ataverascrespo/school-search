@@ -1,6 +1,6 @@
 import { SchoolResult } from "./schoolResult";
 import { CarFront, Footprints, TramFront } from 'lucide-react'
-import React, { useState, FormEvent } from 'react';
+import { FormEvent } from 'react';
 
 interface Props {
     results: SchoolResult[]
@@ -72,7 +72,7 @@ export default function SearchResults({ results }: Props) {
                 </div>
 
                 <form onSubmit={(e) => handleAdd(e, item)} className="flex gap-4 items-baseline">              
-                    <button type="submit" className={`bg-green-700 text-white font-bold p-2 w-1/3 md:w-1/6 rounded-md`}>
+                    <button type="submit" className={`bg-green-700 text-white font-bold p-2 w-full md:w-1/5 rounded-md`}>
                         Add to School List
                     </button>
                 </form>
