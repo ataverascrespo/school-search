@@ -1,7 +1,7 @@
-import { SchoolResult } from "./models/schoolResult";
+import { SchoolResult } from "../models/schoolResult";
 import { CarFront, Footprints, TramFront } from 'lucide-react'
 import { FormEvent } from 'react';
-import { useStore } from "./stores/store";
+import { useStore } from "../stores/store";
 
 interface Props {
     results: SchoolResult[]

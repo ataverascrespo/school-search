@@ -1,8 +1,8 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { Loading } from '../Loading';
-import SearchResults from '../SearchResults';
 import { useStore } from '../stores/store';
 import { SchoolResult } from '../models/schoolResult';
+import SearchResults from './SearchResults';
 
 const SearchComponent: React.FC = () => {
   const [query, setQuery] = useState<string>('');
