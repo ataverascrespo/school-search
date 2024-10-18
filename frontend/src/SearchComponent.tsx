@@ -14,7 +14,11 @@ const SearchComponent: React.FC = () => {
   
   const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!query) return;
+    // Check if both query and time are filled
+    if (!isFormValid()) {
+      alert('Please fill in both fields before submitting.');
+      return; // Prevent form submission if invalid
+    }
 
     setSearchLoading(true);
     setSearched(true);
