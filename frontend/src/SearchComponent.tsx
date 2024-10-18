@@ -63,12 +63,12 @@ const SearchComponent: React.FC = () => {
             placeholder="Search for a school..."
             className="border  border-gray-300 p-2 rounded-md w-full text-sm lg:text-base"
           />
-          <label className='text-xs lg:text-sm px-2 mt-1 italic text-neutral-700' htmlFor="text">School Name</label>
+          <label className='text-xs lg:text-sm px-2 mt-1 italic text-neutral-700' htmlFor="text">What's the school name?</label>
         </div>
 
         <div className="flex flex-col w-1/3 lg:w-1/6">
           <input type="time" min="6:00" max="16:00" value={time} onChange={(e) => setTime(e.target.value)} className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></input>
-          <label className='text-xs lg:text-sm px-2 mt-1 italic text-neutral-700' htmlFor="time">Start Time</label>
+          <label className='text-xs px-2 mt-1 italic text-neutral-700' htmlFor="time">What time does school start?</label>
         </div>
 
         <button type="submit" className={` text-white p-2 w-1/3 md:w-1/6 rounded-md font-bold ${isFormValid() ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'}`}>
