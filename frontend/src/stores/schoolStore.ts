@@ -20,7 +20,7 @@ export default class SchoolStore {
             const response = await fetch(`${url}/search?query=${query}&time=${time}`);
             const data: SchoolResult[] = await response.json();
             runInAction(() => {
-                this.searchedSchools = data;
+                this.searchedSchools = data.sort((a: SchoolResult, b: SchoolResult) => b.school_rank - a.school_rank);                
                 this.searchedSchoolName = query;
                 this.searchedSchoolTime = time;
                 this.isSearched = true;
