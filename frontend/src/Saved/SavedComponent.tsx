@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SchoolResult } from '../schoolResult';
+import { SchoolResult } from '../models/schoolResult';
 import SavedSchools from './SavedSchools';
 import { useStore } from '../stores/store';
 

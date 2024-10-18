@@ -1,6 +1,6 @@
 import { Navbar } from './Navbar';
 import SavedComponent from './Saved/SavedComponent';
-import SearchComponent from './SearchComponent';
+import SearchComponent from './Search/SearchComponent';
 import { Routes, Route, Outlet, BrowserRouter } from "react-router-dom";
 
 export default function App() {

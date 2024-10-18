@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { SchoolResult } from "../schoolResult";
+import { SchoolResult } from "../models/schoolResult";
 
 export default class SchoolStore {
 
