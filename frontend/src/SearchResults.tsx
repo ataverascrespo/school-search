@@ -1,27 +1,19 @@
 import { SchoolResult } from "./schoolResult";
 import { CarFront, Footprints, TramFront } from 'lucide-react'
 import { FormEvent } from 'react';
+import { useStore } from "./stores/store";
 
 interface Props {
     results: SchoolResult[]
 }
 
 export default function SearchResults({ results }: Props) {  
-    
+    const { schoolStore } = useStore();
+
     const handleAdd = async (e: FormEvent<HTMLFormElement>, item: SchoolResult) => {
         e.preventDefault();
-
-        const savedSchools = localStorage.getItem('savedSchools');
-        const arr: any[] = savedSchools ? JSON.parse(savedSchools) : [];
-        const isDuplicate = arr.some(oldItem => oldItem.school_id === item.school_id);
-
-        if (!isDuplicate) {
-            const newArray = [
-                ...arr,
-                item
-            ];
-    
-            localStorage.setItem('savedSchools', JSON.stringify(newArray));
+        if (schoolStore.addSchool(item)) {
+            alert(`Added ${item.school_name} to your list.`)
         }
     }
 
@@ -58,17 +50,6 @@ export default function SearchResults({ results }: Props) {
                                 <p><span className="font-bold">{item.walking_time}</span> walk</p>
                         </div>
                     </div>
-                </div>
-
-                <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">
-                   <a href={item.apple_maps_url} className="flex flex-row justify-center items-center gap-2 py-4 px-2 md:px-24 bg-neutral-100 rounded-lg shadow-md hover:shadow-lg transition-all duration-100">
-                        <p className="text-neutral-800">View in</p>
-                        <img src="/apple_maps.png" alt="apple maps" className="h-[22.5px]" />
-                   </a>
-                   <a href={item.google_maps_url} className="flex flex-row justify-center items-center gap-2 py-4 px-2 md:px-24 bg-neutral-100 rounded-lg shadow-md hover:shadow-lg transition-all duration-100">
-                        <p className="text-neutral-800">View in</p>
-                        <img src="/google_maps.png" alt="apple maps" className="h-[22.5px]" />
-                   </a>
                 </div>
 
                 <form onSubmit={(e) => handleAdd(e, item)} className="flex gap-4 items-baseline">              

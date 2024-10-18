@@ -1,16 +1,32 @@
-import React, { useState, FormEvent } from 'react';
-import { SchoolResult } from './schoolResult';
+import React, { useState, FormEvent, useEffect } from 'react';
 import { Loading } from './Loading';
 import SearchResults from './SearchResults';
+import { useStore } from './stores/store';
+import { SchoolResult } from './schoolResult';
 
 const SearchComponent: React.FC = () => {
   const [query, setQuery] = useState<string>('');
   const [time, setTime] = useState('');
-  const [results, setResults] = useState<SchoolResult[]>([]);
+  const [schools, setSchools] = useState<SchoolResult[]>([]);
   const [searched, setSearched] = useState<boolean>(false);
   const [isSearchLoading, setSearchLoading] = useState<boolean>(false);
-
+  const { schoolStore } = useStore();
+  
   var apiURL = import.meta.env.VITE_API_URL;
+
+  // // Function to retrieve schools from localStorage
+  // const retrieveSearchedSchools = () => {
+  //   const searchedSchools = localStorage.getItem('searchedSchools');
+  //   const arr: SchoolResult[] = searchedSchools ? JSON.parse(searchedSchools) : [];
+  //   setResults(arr);
+  // };
+
+  useEffect(() => {
+    setSchools(schoolStore.searchedSchools)
+    setQuery(schoolStore.searchedSchoolName)
+    setTime(schoolStore.searchedSchoolTime)
+    setSearched(schoolStore.isSearched);
+  }, []);
   
   const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,18 +35,13 @@ const SearchComponent: React.FC = () => {
       alert('Please fill in both fields before submitting.');
       return; // Prevent form submission if invalid
     }
-
     setSearchLoading(true);
-    setSearched(true);
-        
-    try {
-      const response = await fetch(`${apiURL}/search?query=${query}&time=${time}`);
-      const data: SchoolResult[] = await response.json();
-      setResults(data);
-      setSearchLoading(false)
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+    await schoolStore.searchSchools(query, time, apiURL);
+    setSchools(schoolStore.searchedSchools);
+    setQuery(schoolStore.searchedSchoolName);
+    setTime(schoolStore.searchedSchoolTime)
+    setSearched(schoolStore.isSearched);
+    setSearchLoading(false);
   };
 
   const isFormValid = () => {
@@ -41,7 +52,7 @@ const SearchComponent: React.FC = () => {
     <div className="container mx-auto p-4">
       
       <h1 className="text-4xl font-bold text-center mt-12">TDSB School Search</h1>
-      <h2 className='text-sm mx-4 text-center mb-6'>Search for a school below. LIO rankings are descending, so 1/460 is low but 460/460 is high</h2>
+      <h2 className='text-sm mx-4 text-center mb-6'>Search for a school below, then add ones you will possibly work at.</h2>
 
       <form onSubmit={handleSearch} className="flex gap-4 items-baseline">
         <div className="flex flex-col w-full">
@@ -70,9 +81,9 @@ const SearchComponent: React.FC = () => {
             ? <Loading/>
             : (
                 <div className="mt-4">
-                    {searched && results.length > 0 ? (
+                    {searched && schools.length > 0 ? (
                     <ul>
-                        <SearchResults results={results}></SearchResults>
+                        <SearchResults results={schools}></SearchResults>
                     </ul>
                     ) : (
                         searched && <p>No results found</p> // Only show if searched

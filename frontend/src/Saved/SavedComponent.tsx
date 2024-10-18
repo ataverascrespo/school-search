@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { SchoolResult } from '../schoolResult';
 import SavedSchools from './SavedSchools';
+import { useStore } from '../stores/store';
 
 const SavedComponent: React.FC = () => {
-
   const [schools, setSchools] = useState<SchoolResult[]>([]);
+  const { schoolStore } = useStore();
 
   // Function to retrieve schools from localStorage
   const retrieveSchools = () => {
-    const savedSchools = localStorage.getItem('savedSchools');
-    const arr: SchoolResult[] = savedSchools ? JSON.parse(savedSchools) : [];
-    setSchools(arr);
+    const schools = schoolStore.getSchools();
+    setSchools(schools);
   };
 
   useEffect(() => {
@@ -19,6 +19,10 @@ const SavedComponent: React.FC = () => {
   
   return (
     <div className="container mx-auto p-4">
+
+    <h1 className="text-4xl font-bold text-center mt-12">TDSB Saved List</h1>
+    <h2 className='text-sm mx-4 text-center mb-6'>LIO rankings are descending, so 1/460 is low but 460/460 is high</h2>
+
       {(
         <div className="mt-4">
             {schools.length > 0 ? (

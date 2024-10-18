@@ -1,19 +1,23 @@
 import { SchoolResult } from "../schoolResult";
 import { CarFront, Footprints, TramFront } from 'lucide-react'
 import { FormEvent } from 'react';
+import { useNavigate } from 'react-router'
+import { useStore } from "../stores/store";
 
 interface Props {
     schools: SchoolResult[]
 }
 
 export default function SearchResults({ schools }: Props) {  
+    const navigate = useNavigate()
+    const { schoolStore } = useStore();
     
     const handleRemove = async (e: FormEvent<HTMLFormElement>, id: number) => {
         e.preventDefault();
 
         if(window.confirm('Are you sure you want to delete this school from your list?')) {
-            schools = schools.filter(school => school.school_id !== id);
-            localStorage.setItem('savedSchools', JSON.stringify(schools)); 
+            schoolStore.removeSchool(id);
+            navigate(0)
         }
     }
 
