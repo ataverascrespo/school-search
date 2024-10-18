@@ -53,11 +53,11 @@ export default function SearchResults({ results }: Props) {
                 </div>
 
                 <div className="flex flex-col gap-4 lg:flex-row lg:gap-8">
-                   <a href={item.apple_maps_url} className="flex flex-row justify-center items-center gap-2 py-4 px-2 md:px-24 bg-neutral-100 rounded-lg shadow-md hover:shadow-lg transition-all duration-100">
+                   <a href={item.apple_maps_url} target="_blank" className="flex flex-row justify-center items-center gap-2 py-4 px-2 md:px-24 bg-neutral-100 rounded-lg shadow-md hover:shadow-lg transition-all duration-100">
                         <p className="text-neutral-800">View in</p>
                         <img src="/apple_maps.png" alt="apple maps" className="h-[22.5px]" />
                    </a>
-                   <a href={item.google_maps_url} className="flex flex-row justify-center items-center gap-2 py-4 px-2 md:px-24 bg-neutral-100 rounded-lg shadow-md hover:shadow-lg transition-all duration-100">
+                   <a href={item.google_maps_url} target="_blank" className="flex flex-row justify-center items-center gap-2 py-4 px-2 md:px-24 bg-neutral-100 rounded-lg shadow-md hover:shadow-lg transition-all duration-100">
                         <p className="text-neutral-800">View in</p>
                         <img src="/google_maps.png" alt="apple maps" className="h-[22.5px]" />
                    </a>
