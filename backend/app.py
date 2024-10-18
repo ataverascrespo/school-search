@@ -34,7 +34,8 @@ def calculate_travel_times(start_address, destination_address, start_time):
     # Get the API key from environment variables
     api_key = os.getenv('API_KEY')
     
-    travel_modes = ['walking', 'transit', 'driving']
+    # remember to add driving back
+    travel_modes = ['walking', 'transit']
     travel_times = {}
 
     tomorrow = datetime.now() + timedelta(days=1)
@@ -121,7 +122,6 @@ def search_data():
                 "apple_maps_url": apple_maps_url if apple_maps_url else "URL not found"
             })
 
-            results.sort(key=lambda x: x['school_rank'], reverse=True)
         return jsonify(results)
                         
     else:
