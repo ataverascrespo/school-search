@@ -94,6 +94,7 @@ def search_data():
 
     search_term = request.args.get('query', type=str)  
     search_time = request.args.get('time', type=str)
+    start_address = request.args.get('address', type=str)
     school_matches = search_school_rank(df_file_path, search_term)
     
     # Check if any matches were found
@@ -105,7 +106,6 @@ def search_data():
             school_id = row[df_school_id_column]
             school_rank = row[df_rank_column]
 
-            start_address = os.getenv('HOME_ADDRESS')
             driving_time, walking_time, transit_time = calculate_travel_times(start_address, school_name, search_time)
             google_maps_url, apple_maps_url = generate_maps_url(start_address, school_name)
 
@@ -114,6 +114,7 @@ def search_data():
                 "school_name": school_name,
                 "school_rank": school_rank,
                 "school_time": search_time,
+                "start_address": start_address,
                 "driving_time": driving_time,
                 "walking_time": walking_time,
                 "transit_time": transit_time,

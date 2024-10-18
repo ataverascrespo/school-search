@@ -7,6 +7,7 @@ export default class SchoolStore {
     searchedSchools: SchoolResult[] = [];
     searchedSchoolName: string = "";
     searchedSchoolTime: string = "";
+    searchedAddress: string = "";
     isSearched: boolean = false;
 
     // Set this store as observable.
@@ -15,27 +16,34 @@ export default class SchoolStore {
         makeAutoObservable(this)
     }
 
-    searchSchools = async (query: string, time: string, url: string) => {
+    searchSchools = async (query: string, time: string, address: string, url: string) => {
         try {
-            const response = await fetch(`${url}/search?query=${query}&time=${time}`);
+            const response = await fetch(`${url}/search?address=${address}&query=${query}&time=${time}`);
             const data: SchoolResult[] = await response.json();
             runInAction(() => {
                 this.searchedSchools = data.sort((a: SchoolResult, b: SchoolResult) => b.school_rank - a.school_rank);                
                 this.searchedSchoolName = query;
                 this.searchedSchoolTime = time;
+                this.searchedAddress = address
                 this.isSearched = true;
             });
             localStorage.setItem('searchedSchools', JSON.stringify(data));
+            localStorage.setItem('address', JSON.stringify(this.searchedAddress));
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     }
     
-    
     getSchools = () => {
         const savedSchools = localStorage.getItem('savedSchools');
         const arr: SchoolResult[] = savedSchools ? JSON.parse(savedSchools) : [];
         return arr;
+    }
+
+    getAddress = () => {
+        const savedAddress = localStorage.getItem('address');
+        const address: string = savedAddress ? JSON.parse(savedAddress) : [];
+        return address;
     }
 
     addSchool = (school: SchoolResult) => {

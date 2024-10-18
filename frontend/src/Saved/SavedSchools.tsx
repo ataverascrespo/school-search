@@ -27,15 +27,12 @@ export default function SearchResults({ schools }: Props) {
             <div key={item.school_id} className="mb-10 flex flex-col bg-[#fdfdfd] rounded-lg py-8 px-6 lg:px-12 gap-6 border-2 border-neutral-200">
                 <div className="flex flex-col">
                     <h1 className="text-xl lg:text-2xl font-bold">{item.school_name}</h1>
-                    <h2 className="text-base lg:text-lg font-light">LIO ranking of
-                            <span className="font-bold">&nbsp;{item.school_rank}&nbsp;</span>
-                            out of 460
-                    </h2>
+                    <h2 className="text-base lg:text-lg font-light"><span className="font-bold">{item.school_rank}</span> out of 460</h2>
                 </div>
 
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col">
-                        <p>Estimated travel times for <span className="font-bold">{item.school_time}</span> start:</p>
+                        <p>Estimated travel times for <span className="font-bold">{item.school_time}</span> start from <span className="font-medium">{item.start_address}</span></p>
                         <p className="text-xs italic">Always verify travel times on your own!</p>
                     </div>
                     <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">

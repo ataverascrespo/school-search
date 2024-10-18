@@ -6,7 +6,8 @@ import SearchResults from './SearchResults';
 
 const SearchComponent: React.FC = () => {
   const [query, setQuery] = useState<string>('');
-  const [time, setTime] = useState('');
+  const [time, setTime] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
   const [schools, setSchools] = useState<SchoolResult[]>([]);
   const [searched, setSearched] = useState<boolean>(false);
   const [isSearchLoading, setSearchLoading] = useState<boolean>(false);
@@ -26,17 +27,20 @@ const SearchComponent: React.FC = () => {
     setQuery(schoolStore.searchedSchoolName)
     setTime(schoolStore.searchedSchoolTime)
     setSearched(schoolStore.isSearched);
+    setAddress(schoolStore.getAddress());
   }, []);
   
   const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Check if both query and time are filled
     if (!isFormValid()) {
-      alert('Please fill in both fields before submitting.');
+      alert('Please fill in all fields before submitting.');
       return; // Prevent form submission if invalid
     }
     setSearchLoading(true);
-    await schoolStore.searchSchools(query, time, apiURL);
+
+    await schoolStore.searchSchools(query, time, address, apiURL);
+
     setSchools(schoolStore.searchedSchools);
     setQuery(schoolStore.searchedSchoolName);
     setTime(schoolStore.searchedSchoolTime)
@@ -45,7 +49,7 @@ const SearchComponent: React.FC = () => {
   };
 
   const isFormValid = () => {
-      return query.trim() !== '' && time.trim() !== '';
+      return query.trim() !== '' && time.trim() !== '' && address.trim() !== '';
   };
 
   return (
@@ -54,26 +58,39 @@ const SearchComponent: React.FC = () => {
       <h1 className="text-4xl font-bold text-center mt-12">TDSB School Search</h1>
       <h2 className='text-sm mx-4 text-center mb-6'>Search for a school below, then add ones you will possibly work at.</h2>
 
-      <form onSubmit={handleSearch} className="flex gap-4 items-baseline">
+      <form onSubmit={handleSearch} className="flex flex-col gap-4 items-baseline">
         <div className="flex flex-col w-full">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for a school..."
-            className="border  border-gray-300 p-2 rounded-md w-full text-sm lg:text-base"
-          />
-          <label className='text-xs lg:text-sm px-2 mt-1 italic text-neutral-700' htmlFor="text">What's the school name?</label>
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="i.e 123 Yonge St, Toronto, ON"
+              className="border border-gray-300 p-2 rounded-md w-full text-sm lg:text-base"
+            />
+            <label className='text-xs lg:text-sm px-2 mt-1 italic text-neutral-700' htmlFor="text">Enter your address (street, city, province)</label>
         </div>
 
-        <div className="flex flex-col w-1/3 lg:w-1/6">
-          <input type="time" min="6:00" max="16:00" value={time} onChange={(e) => setTime(e.target.value)} className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></input>
-          <label className='text-xs px-2 mt-1 italic text-neutral-700' htmlFor="time">What time does school start?</label>
-        </div>
+        <div className="flex flex-row gap-4 items-baseline w-full">
+          <div className="flex flex-col w-full">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for a school..."
+              className="border  border-gray-300 p-2 rounded-md w-full text-sm lg:text-base"
+            />
+            <label className='text-xs lg:text-sm px-2 mt-1 italic text-neutral-700' htmlFor="text">What's the school name?</label>
+          </div>
 
-        <button type="submit" className={` text-white p-2 w-1/3 md:w-1/6 rounded-md font-bold ${isFormValid() ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'}`}>
-          Search
-        </button>
+          <div className="flex flex-col w-1/3 lg:w-1/6">
+            <input type="time" min="6:00" max="16:00" value={time} onChange={(e) => setTime(e.target.value)} className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></input>
+            <label className='text-xs px-2 mt-1 italic text-neutral-700' htmlFor="time">What time does school start?</label>
+          </div>
+
+          <button type="submit" className={` text-white p-2 w-1/3 md:w-1/6 rounded-md font-bold ${isFormValid() ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'}`}>
+            Search
+          </button>
+        </div>
       </form>
 
       {

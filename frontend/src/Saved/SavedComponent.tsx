@@ -21,7 +21,7 @@ const SavedComponent: React.FC = () => {
     <div className="container mx-auto p-4">
 
     <h1 className="text-4xl font-bold text-center mt-12">TDSB Saved List</h1>
-    <h2 className='text-sm mx-4 text-center mb-6'>LIO rankings are descending, so 1/460 is low but 460/460 is high</h2>
+    <h2 className='text-sm mx-4 text-center mb-6'>These are your saved schools with your searched address and start times.</h2>
 
       {(
         <div className="mt-4">
