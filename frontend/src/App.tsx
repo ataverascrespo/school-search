@@ -1,14 +1,42 @@
+import { Navbar } from './Navbar';
+import SavedComponent from './Saved/SavedComponent';
 import SearchComponent from './SearchComponent';
+import { Routes, Route, Outlet, BrowserRouter } from "react-router-dom";
 
-function App() {
-  
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Search />} />
+          <Route path="list" element={<Saved />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function Layout() {
+  return (
+    <div>
+      <Navbar />
+      <Outlet />
+    </div>
+  );
+}
+
+function Search() {
   return (
     <div className="App">
-      <h1 className="text-4xl font-bold text-center mt-12">TDSB School Search</h1>
-      <h2 className='text-sm mx-4 text-center mb-6'>Search for a school below. LIO rankings are descending, so 1/460 is low but 460/460 is high</h2>
       <SearchComponent />
     </div>
   );
 }
 
-export default App
+function Saved() {
+  return (
+    <div className="App">
+      <SavedComponent />
+    </div>
+  );
+}
