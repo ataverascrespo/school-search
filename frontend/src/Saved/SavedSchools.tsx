@@ -8,7 +8,7 @@ interface Props {
     schools: SchoolResult[]
 }
 
-export default function SearchResults({ schools }: Props) {  
+export default function SavedSchools({ schools }: Props) {  
     const navigate = useNavigate()
     const { schoolStore } = useStore();
     

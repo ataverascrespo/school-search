@@ -55,8 +55,8 @@ const SearchComponent: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       
-      <h1 className="text-4xl font-bold text-center mt-12">TDSB School Search</h1>
-      <h2 className='text-sm mx-4 text-center mb-6'>Search for a school below, then add ones you will possibly work at.</h2>
+      <h1 className="text-4xl font-bold text-center mt-12">Add Schools</h1>
+      <h2 className='text-sm mx-4 text-center mb-6'>Search for a school you haven't added to your list.</h2>
 
       <form onSubmit={handleSearch} className="flex flex-col gap-4 items-baseline">
         <div className="flex flex-col w-full">
