@@ -61,3 +61,18 @@ To set up a local installation of the app:
    - Create a spreadsheet with the names of all your schools. Give them unique keys (i.e UUIDs) and add any other important info
    - Save the spreadsheet in the /backend directory with any name
    - Make whatever changes necessary to the API JSON return/ingestion in both `backend/app.py` and `frontend/src/models/schoolResult.ts`
+
+### Deployment Instructions
+
+If you want to deploy this for your own use, feel free to do so. I've set this project up in a way that deploying it is extremely easy (but most importantly, super cheap)
+
+- For deploying the front-end application, I always recommend [Netlify](https://www.netlify.com/). It integrates right into your GitHub repos with automatic CI/CD, and costs $0.
+- For deploying the back-end API, a cloud-hosted VM is the easiest way to get the API deployed. I recommend AWS EC2 (1 year of a t2.micro for free) or GCP Compute Engine (e2-micro instances are always free). Whichever VM you choose to use, you can [follow this guide I wrote for another project on my blog](https://blog.alextaverascrespo.ca/how-to-deploy-a-net-8-api-using-docker-aws-ec2-and-nginx#heading-configuring-our-ec2-instance) - the general steps should be the same regardless:
+   - SSH into your VM
+   - Install Git and Docker Engine
+   - Clone this forked git repository onto your VM
+   - `cd school-search/backend`, then run `docker build -t school-search .` to build the Docker image using the included Dockerfile
+   - Next, run `sudo docker run -d -p 5000:5000 -v TDSB_lio.xlsx:/TDSB_lio.xlsx -e EXCEL_FILE_PATH=TDSB_lio.xlsx -e API_KEY=your_key school-search`. You can change the name of the mounted .xlsx file as necessary, and make sure to add your Google Directions API key.
+   - Buy the cheapest domain you can find, and follow the above blog's instructions to configure NGINX as a reverse proxy and Certbot for HTTPS/SSL certification
+
+If you follow all those steps, you'll have a deployed app! For reference, this app cost me a whole $1.16 CAD for the year ($0 webapp hosting, always free GCP VM, and $1.16 for the domain).
